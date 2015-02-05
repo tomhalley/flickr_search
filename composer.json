@@ -1,0 +1,17 @@
+{
+    "name": "tom/flickr_search",
+    "authors": [
+        {
+            "name": "Tom Halley",
+            "email": "tomhalley89@gmail.com"
+        }
+    ],
+    "require": {
+        
+    },
+    "autoload": {
+        "psr-0": {
+            "Flickr\\": "src/"
+        }
+    }
+}

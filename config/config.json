@@ -1,0 +1,7 @@
+{
+  "api": {
+    "url": "https://api.flickr.com/services/rest/",
+    "key": "e709479d19a96b787730d7391c2c4fb9",
+    "secret": "47e4c98631813591"
+  }
+}
