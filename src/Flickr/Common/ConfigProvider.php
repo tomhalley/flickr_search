@@ -13,20 +13,14 @@ class ConfigProvider {
 
     public static function getConfig() {
         $configFile = file_get_contents("config/config.json");
-
         return json_decode($configFile);
     }
 
     public static function getUrl($method, array $args) {
-        $url = self::getConfig()->api->url;
-        $url .= "?method=" . $method;
-        $url .= "&api_key=" . self::getConfig()->api->key;
-        $url .= "&format=rest";
+        $args['method'] = $method;
+        $args['api_key'] = self::getConfig()->api->key;
+        $args['format'] = 'rest';
 
-        foreach($args as $key => $arg) {
-            $url .= "&" . $key . "=" . $arg;
-        }
-
-        return $url;
+        return self::getConfig()->api->url . "?" . http_build_query($args);
     }
 }

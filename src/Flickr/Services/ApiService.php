@@ -12,6 +12,9 @@ use Flickr\Common\ConfigProvider;
 
 class ApiService {
 
+    public $lastPageCount;
+    public $lastPerPage;
+
     public function searchImages($searchString, $perPage = 20, $page = 1) {
         $args = [
             "per_page" => $perPage,
@@ -21,21 +24,25 @@ class ApiService {
 
         $url = ConfigProvider::getUrl(ConfigProvider::API_METHOD_SEARCH, $args);
 
-        echo $url;
-
         $file = \file_get_contents($url);
         $results = simplexml_load_string($file);
 
-        var_dump($results);
+        $this->lastPageCount = $results->photos['pages'];
+        $this->lastPerPage = $results->photos['perpage'];
 
-        $output = [];
-        foreach($results->photos->photo as $result) {
-            $url = "http://farm" . $result['farm'];
-            $url .= ".staticflickr.com/" . $result['server'];
-            $url .= "/" . $result['id'] . "_" . $result['secret'] . "_t.jpg";
-            $output[] = $url;
-        }
+        return $results->photos->photo;
+    }
 
-        return $output;
+    public static function getImageSrc($photo) {
+        $url = "http://farm" . $photo['farm'];
+        $url .= ".staticflickr.com/" . $photo['server'];
+        $url .= "/" . $photo['id'] . "_" . $photo['secret'] . "_t.jpg";
+        return $url;
+    }
+
+    public static function getPhotoDetailsUrl($photo) {
+        $url = "https://www.flickr.com/photos/" . $photo['owner'];
+        $url .= "/" . $photo["id"];
+        return $url;
     }
 }
