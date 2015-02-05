@@ -6,6 +6,9 @@ require "src/Flickr/Services/ApiService.php";
 use Flickr\Service\ApiService;
 $flickerApiService = new ApiService();
 
+$criteria = (empty($_GET["criteria"])) ? '' : $_GET["criteria"];
+$perPage = (empty($_GET["per_page"])) ? 20 : $_GET["per_page"];
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -45,32 +48,28 @@ $flickerApiService = new ApiService();
 <body>
     <form action="index.php" method="get">
         <input type="hidden" name="page" value="1" />
-        <input type="hidden" name="per_page" value="<?= $_GET['per_page'] ?>" />
+        <input type="hidden" name="per_page" value="<?= $perPage ?>" />
 
-        <input type="text" value="<?php if(!empty($_GET["criteria"])) echo $_GET["criteria"] ?>" placeholder="Search..." name="criteria" required>
+        <input type="text" value="<?= $criteria ?>" placeholder="Search..." name="criteria" required>
 
-        <?php
-            $perPage = (!empty($_GET["per_page"])) ? $_GET["per_page"] : 20;
-
-            echo \Flickr\Pagination::buildCountSelector($perPage);
-        ?>
+        <?= \Flickr\Pagination::buildCountSelector($perPage); ?>
 
         <input type="submit" value="Search">
     </form>
     <div class="images">
         <?php
-            if(!empty($_GET["criteria"])) {
+            if($criteria !== '') {
                 if(!empty($_GET["page"])) {
                     $page = ($_GET["page"] < 1) ? 1 : $_GET["page"];
                 } else {
                     $page = 1;
                 }
 
-                $images = $flickerApiService->searchImages($_GET["criteria"], $perPage, $page);
+                $images = $flickerApiService->searchImages($criteria, $perPage, $page);
         ?>
 
         <div class="pagination">
-            <?= \Flickr\Pagination::buildPagination($_GET["criteria"], $page, $perPage, $flickerApiService->lastPageCount); ?>
+            <?= \Flickr\Pagination::buildPagination($criteria, $page, $perPage, $flickerApiService->lastPageCount); ?>
         </div>
 
         <?php foreach($images as $image) { ?>
