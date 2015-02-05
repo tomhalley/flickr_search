@@ -1,12 +1,10 @@
 <?php
-use Flickr\Service\ApiService;
-
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
-
 require "src/Flickr/Pagination.php";
 require "src/Flickr/Common/ConfigProvider.php";
 require "src/Flickr/Services/ApiService.php";
+
+use Flickr\Service\ApiService;
+$flickerApiService = new ApiService();
 
 ?>
 <!DOCTYPE html>
@@ -35,17 +33,12 @@ require "src/Flickr/Services/ApiService.php";
             background: #DDD;
             margin: 3px;
             padding: 5px;
-            color: black;
             text-align: center;
             vertical-align: middle;
         }
 
         .pagination span {
-            color: white;
-        }
-
-        .pagination a{
-
+            color: black;
         }
     </style>
 </head>
@@ -58,6 +51,7 @@ require "src/Flickr/Services/ApiService.php";
 
         <?php
             $perPage = (!empty($_GET["per_page"])) ? $_GET["per_page"] : 20;
+
             echo \Flickr\Pagination::buildCountSelector($perPage);
         ?>
 
@@ -66,10 +60,6 @@ require "src/Flickr/Services/ApiService.php";
     <div class="images">
         <?php
             if(!empty($_GET["criteria"])) {
-                $criteria = $_GET["criteria"];
-
-                $flickerApiService = new Flickr\Service\ApiService();
-
                 if(!empty($_GET["page"])) {
                     $page = ($_GET["page"] < 1) ? 1 : $_GET["page"];
                 } else {
@@ -80,7 +70,7 @@ require "src/Flickr/Services/ApiService.php";
         ?>
 
         <div class="pagination">
-            <?= \Flickr\Pagination::buildPagination($criteria, $page, $perPage, $flickerApiService->lastPageCount); ?>
+            <?= \Flickr\Pagination::buildPagination($_GET["criteria"], $page, $perPage, $flickerApiService->lastPageCount); ?>
         </div>
 
         <?php foreach($images as $image) { ?>

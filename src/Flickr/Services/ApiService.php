@@ -10,12 +10,27 @@ namespace Flickr\Service;
 
 use Flickr\Common\ConfigProvider;
 
-class ApiService {
-
+/**
+ * Class for the Flickr Api
+ *
+ * Class ApiService
+ * @package Flickr\Service
+ */
+class ApiService
+{
     public $lastPageCount;
     public $lastPerPage;
 
-    public function searchImages($searchString, $perPage = 20, $page = 1) {
+    /**
+     * Returns parsed XML data from Flickr API search
+     *
+     * @param $searchString
+     * @param int $perPage
+     * @param int $page
+     * @return mixed
+     */
+    public function searchImages($searchString, $perPage = 20, $page = 1)
+    {
         $args = [
             "per_page" => $perPage,
             "page" => $page,
@@ -33,14 +48,28 @@ class ApiService {
         return $results->photos->photo;
     }
 
-    public static function getImageSrc($photo) {
+    /**
+     * Util for building an image src url
+     *
+     * @param $photo
+     * @return string
+     */
+    public static function getImageSrc($photo)
+    {
         $url = "http://farm" . $photo['farm'];
         $url .= ".staticflickr.com/" . $photo['server'];
         $url .= "/" . $photo['id'] . "_" . $photo['secret'] . "_t.jpg";
         return $url;
     }
 
-    public static function getPhotoDetailsUrl($photo) {
+    /**
+     * Util for building an images details url
+     *
+     * @param $photo
+     * @return string
+     */
+    public static function getPhotoDetailsUrl($photo)
+    {
         $url = "https://www.flickr.com/photos/" . $photo['owner'];
         $url .= "/" . $photo["id"];
         return $url;

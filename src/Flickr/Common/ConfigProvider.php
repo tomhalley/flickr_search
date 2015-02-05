@@ -8,15 +8,36 @@
 
 namespace Flickr\Common;
 
-class ConfigProvider {
+/**
+ * Parses the config.json object
+ *
+ * Class ConfigProvider
+ * @package Flickr\Common
+ */
+class ConfigProvider
+{
     const API_METHOD_SEARCH = "flickr.photos.search";
 
-    public static function getConfig() {
+    /**
+     * Returns config as parsed JSON object
+     *
+     * @return mixed
+     */
+    public static function getConfig()
+    {
         $configFile = file_get_contents("config/config.json");
         return json_decode($configFile);
     }
 
-    public static function getUrl($method, array $args) {
+    /**
+     * Returns URL from config for Flickr API
+     *
+     * @param $method
+     * @param array $args
+     * @return string
+     */
+    public static function getUrl($method, array $args)
+    {
         $args['method'] = $method;
         $args['api_key'] = self::getConfig()->api->key;
         $args['format'] = 'rest';

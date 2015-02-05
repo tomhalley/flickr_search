@@ -9,7 +9,7 @@
 namespace Flickr;
 
 /**
- * Builds pagination HTML
+ * Builds HTML for pagination
  *
  * Class Pagination
  * @package Flickr
@@ -28,6 +28,31 @@ class Pagination
     }
 
     /**
+     * Builds last paginate button
+     *
+     * @param $criteria
+     * @param $perPage
+     * @param $page
+     * @return string
+     */
+    protected static function buildLastPaginate($criteria, $perPage, $page)
+    {
+        $lastPageArgs = [
+            "criteria" => $criteria,
+            "per_page" => $perPage,
+            "page" => self::getLastPage($page)
+        ];
+
+        if ($page > 1) {
+            $pagination = '<a href="index.php?' . http_build_query($lastPageArgs) . '"><</a>';
+        } else {
+            $pagination = '<span><</span>';
+        }
+
+        return $pagination;
+    }
+
+    /**
      * Calculates the next page
      *
      * @param $currentPage
@@ -37,6 +62,32 @@ class Pagination
     protected static function getNextPage($currentPage, $pageTotal)
     {
         return ($currentPage >= $pageTotal) ? $pageTotal : $currentPage + 1;
+    }
+
+    /**
+     * Builds next button
+     *
+     * @param $criteria
+     * @param $perPage
+     * @param $page
+     * @param $pageTotal
+     * @return string
+     */
+    public static function buildNextPaginate($criteria, $perPage, $page, $pageTotal)
+    {
+        $nextPageArgs = [
+            "criteria" => $criteria,
+            "per_page" => $perPage,
+            "page" => self::getNextPage($page, $pageTotal)
+        ];
+
+        if ($page != $pageTotal) {
+            $pagination = '<a href="index.php?' . http_build_query($nextPageArgs) . '">></a>';
+        } else {
+            $pagination = '<span>></span>';
+        }
+
+        return $pagination;
     }
 
     /**
@@ -50,58 +101,53 @@ class Pagination
      */
     public static function buildPagination($criteria, $page, $perPage, $pageTotal)
     {
-        $lastPageArgs = [
-            "criteria" => $criteria,
-            "per_page" => $perPage,
-            "page" => self::getLastPage($page)
-        ];
+        $pagination = self::buildLastPaginate($criteria, $perPage, $page);
 
-        $pagination = '<a href="index.php?' . http_build_query($lastPageArgs) . '"><</a>';
-
-        if($page <= 5) {
-
+        if ($page <= 5) {
             $paginationStart = 1;
             $paginationEnd = 9;
-
         } else {
-
             $paginationStart = $page - 4;
             $paginationEnd = $page + 4;
-
         }
 
-        for($i = $paginationStart; $i <= $paginationEnd; $i++) {
+        for ($i = $paginationStart; $i <= $paginationEnd; $i++) {
             $pageArgs = [
                 "criteria" => $criteria,
                 "per_page" => $perPage,
                 "page" => $i
             ];
 
-            if($page == $i) {
+            if ($page == $i) {
                 $pagination .= '<span>' . $i . '</span>';
             } else {
                 $pagination .= '<a href="index.php?' . http_build_query($pageArgs) . '">' . $i . '</a>';
             }
+
+            if ($i == $pageTotal) {
+                break;
+            }
         }
 
-        $nextPageArgs = [
-            "criteria" => $criteria,
-            "per_page" => $perPage,
-            "page" => self::getNextPage($page, $pageTotal)
-        ];
-
-        $pagination .= '<a href="index.php?' . http_build_query($nextPageArgs) . '">></a>';
+        $pagination .= self::buildNextPaginate($criteria, $perPage, $page, $pageTotal);
 
         return $pagination;
     }
 
-    public static function buildCountSelector($currentPerPage = 10) {
+    /**
+     * Builds PerPage select
+     *
+     * @param int $currentPerPage
+     * @return string
+     */
+    public static function buildCountSelector($currentPerPage = 10)
+    {
         $values = [10, 25, 50, 100];
 
         $html = "<select name='per_page'>";
 
-        foreach($values as $value) {
-            if($value == $currentPerPage) {
+        foreach ($values as $value) {
+            if ($value == $currentPerPage) {
                 $html .= "<option value='" . $value . "' selected>" . $value . "</option>";
             } else {
                 $html .= "<option value='" . $value . "'>" . $value . "</option>";
